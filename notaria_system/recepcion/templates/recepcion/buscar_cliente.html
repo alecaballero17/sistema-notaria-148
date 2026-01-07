@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recepción | Notaría 148</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #8b1d5c;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #8b1d5c;
+            margin-top: 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #8b1d5c;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #6f1748;
+        }
+
+        .card {
+            background: #f9f9fb;
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .estado {
+            font-weight: bold;
+        }
+
+        .REGISTRADO { color: #555; }
+        .EN_PROCESO { color: #d58512; }
+        .OBSERVADO { color: #c9302c; }
+        .FINALIZADO { color: #31708f; }
+        .ENTREGADO { color: #3c763d; }
+
+        .btn-registrar {
+            display: inline-block;
+            margin-top: 15px;
+            background: #8b1d5c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-registrar:hover {
+            background: #6f1748;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Notaría de Fe Pública Nº 148</h1>
+    <p>Recepción de Clientes</p>
+</header>
+
+<div class="container">
+
+    <form method="post">
+        {% csrf_token %}
+        <h2>Buscar cliente por CI</h2>
+        <input type="text" name="ci" placeholder="Ingrese CI del cliente" value="{{ ci }}" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if cliente %}
+        <div class="card">
+            <h2>Datos del Cliente</h2>
+            <p><strong>Nombre:</strong> {{ cliente.nombre_completo }}</p>
+            <p><strong>CI:</strong> {{ cliente.ci }}</p>
+            <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+            <p><strong>Fecha de nacimiento:</strong> {{ cliente.fecha_nacimiento }}</p>
+        </div>
+
+        <div class="card">
+            <h2>Trámites</h2>
+            {% if tramites %}
+                <table>
+                    <tr>
+                        <th>Servicio</th>
+                        <th>Número</th>
+                        <th>Estado</th>
+                    </tr>
+                    {% for t in tramites %}
+                    <tr>
+                        <td>{{ t.tipo_servicio }}</td>
+                        <td>{{ t.numero_interno }}</td>
+                        <td class="estado {{ t.estado }}">{{ t.get_estado_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>No tiene trámites registrados.</p>
+            {% endif %}
+        </div>
+
+    {% elif ci %}
+        <div class="card">
+            <p><strong>No se encontró ningún cliente con ese CI.</strong></p>
+            <a href="/admin/clientes/cliente/add/" class="btn-registrar">
+                ➕ Registrar nuevo cliente
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+
+<footer>
+    © Notaría de Fe Pública Nº 148 – Santa Cruz
+</footer>
+
+</body>
+</html>
